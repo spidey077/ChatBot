@@ -38,8 +38,15 @@ app.post("/ask", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+import path from "path";
+import { fileURLToPath } from "url";
 
+// Fix for ES Modules __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static files
+app.use(express.static(path.join(__dirname, "public")));
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
-
 
