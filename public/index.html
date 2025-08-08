@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FAQ Chatbot</title>
+  <title>Chatbot</title>
   <style>
     body {
       font-family: 'Arial', sans-serif;
@@ -96,12 +96,42 @@
     @media (max-width: 600px) {
       .chat-container { height: 90vh; }
     }
+    @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .message {
+    padding: 10px 15px;
+    border-radius: 10px;
+    max-width: 80%;
+    word-wrap: break-word;
+    animation: fadeInUp 0.3s ease forwards;
+  }
+
+  .user-message {
+    background: #6c6cff;
+    color: white;
+    align-self: flex-end;
+  }
+
+  .bot-message {
+    background: #f1f1f1;
+    color: #333;
+    align-self: flex-start;
+  }
   </style>
 </head>
 <body>
 
   <div class="chat-container">
-    <div class="chat-header">FAQ Chatbot</div>
+    <div class="chat-header">My Chatbot</div>
     <div class="chat-messages" id="chatMessages"></div>
     <div class="chat-input-area">
       <textarea id="question" placeholder="Type your question..."></textarea>
