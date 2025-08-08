@@ -2,6 +2,8 @@ import express from "express";
 import fetch from "node-fetch";
 import dotenv from "dotenv";
 import cors from "cors";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 const app = express();
@@ -9,6 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Chatbot endpoint
 app.post("/ask", async (req, res) => {
   try {
     const userMessage = req.body.message;
@@ -33,20 +36,19 @@ app.post("/ask", async (req, res) => {
     });
 
     const data = await apiResponse.json();
-    res.json(data);
+    res.json({ answer: data.choices?.[0]?.message?.content || "Sorry, I couldn’t find an answer." });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
-import path from "path";
-import { fileURLToPath } from "url";
 
-// Fix for ES Modules __dirname
+// Static files setup
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-// Serve static files
 app.use(express.static(path.join(__dirname, "public")));
+
+// Health check for Render
+app.get("/healthz", (req, res) => res.sendStatus(204));
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
-
