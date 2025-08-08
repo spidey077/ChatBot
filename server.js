@@ -27,7 +27,8 @@ app.post("/ask", async (req, res) => {
         messages: [
           {
             role: "system",
-            content: "You are a helpful FAQ assistant for the website imdadullahbootstrap.vercel.app. Only answer questions about Imdadullah, his services, technologies, or portfolio."
+            content:
+              "You are a helpful FAQ assistant for the website imdadullahbootstrap.vercel.app. Only answer questions about Imdadullah, his services, technologies, or portfolio."
           },
           { role: "user", content: userMessage }
         ],
@@ -36,7 +37,9 @@ app.post("/ask", async (req, res) => {
     });
 
     const data = await apiResponse.json();
-    res.json({ answer: data.choices?.[0]?.message?.content || "Sorry, I couldn’t find an answer." });
+    res.json({
+      answer: data.choices?.[0]?.message?.content || "Sorry, I couldn’t find an answer."
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -46,6 +49,11 @@ app.post("/ask", async (req, res) => {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "public")));
+
+// Serve index.html for root path
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
 // Health check for Render
 app.get("/healthz", (req, res) => res.sendStatus(204));
