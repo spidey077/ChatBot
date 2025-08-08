@@ -1,20 +1,26 @@
 window.addEventListener("scroll",function(){let e=document.querySelector(".navbar");console.log(e),e&&(window.scrollY>50?e.classList.add("scrolled"):e.classList.remove("scrolled"))}),document.addEventListener("DOMContentLoaded",function(){let e=document.getElementById("loading-screen"),t=document.getElementById("content");e.classList.add("hidden"),t.classList.add("show"),setTimeout(()=>{e.style.display="none"},3e3)}),document.addEventListener("DOMContentLoaded",function(){let e=document.querySelectorAll(".reveal");function t(){e.forEach(e=>{let t=e.getBoundingClientRect().top,n=window.innerHeight;t<n-80?e.classList.add("active"):e.classList.remove("active")})}window.addEventListener("scroll",t),t()});const cursor=document.querySelector(".cursor");document.addEventListener("mousemove",e=>{cursor.style.left=`${e.clientX}px`,cursor.style.top=`${e.clientY}px`});const hoverElements=document.querySelectorAll(".hover-target");hoverElements.forEach(e=>{e.addEventListener("mouseover",()=>{cursor.style.width="130px",cursor.style.height="130px",cursor.style.backgroundColor="rgba(47, 213, 255, 0.69)"}),e.addEventListener("mouseleave",()=>{cursor.style.width="10px",cursor.style.height="10px",cursor.style.backgroundColor="transparent"})});const letters=document.querySelectorAll(".animated-title span");let index=0;function animateLetters(){letters.forEach(e=>e.classList.remove("active")),letters[index].classList.add("active"),index=(index+1)%letters.length,setTimeout(animateLetters,1e3)}animateLetters(),document.getElementById("lottie-animation1").addEventListener("click",function(){let e=document.getElementById("about");window.scrollTo({top:e.offsetTop-90,behavior:"smooth"})}),document.getElementById("lottie-animation").addEventListener("click",function(){window.location.href="#home"});
-const chatbot = document.getElementById("chatbotContainer");
+document.addEventListener("DOMContentLoaded", function () {
+  const chatbot = document.getElementById("chatbotContainer");
   const chatbotBtn = document.querySelector(".chatbot-button");
 
   function toggleChatbot() {
-    chatbot.style.display = chatbot.style.display === "block" ? "none" : "block";
+    chatbot.classList.toggle("open");
   }
-
+  chatbotBtn.addEventListener("click", function (event) {
+    event.stopPropagation();
+    toggleChatbot();
+  });
   document.addEventListener("click", function (event) {
     if (
-      chatbot.style.display === "block" &&
+      chatbot.classList.contains("open") &&
       !chatbot.contains(event.target) &&
       !chatbotBtn.contains(event.target)
     ) {
-      chatbot.style.display = "none";
+      chatbot.classList.remove("open");
     }
   });
+});
+
 
   async function askQuestion() {
     const question = document.getElementById("question").value;
@@ -66,4 +72,5 @@ const chatbot = document.getElementById("chatbotContainer");
     } catch (err) {
       responseDiv.innerHTML = "Error: " + err.message;
     }
+
   }
