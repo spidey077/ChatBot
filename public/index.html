@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FAQ Chatbot</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(135deg, #6c6cff, #6affff);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+    }
+    h2 {
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      padding: 15px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      margin-bottom: 15px;
+      resize: none;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+    textarea:focus { border-color: #6c6cff; }
+    button {
+      background-color: #6c6cff;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover { background-color: #4a4ae0; }
+    #response {
+      margin-top: 20px;
+      background-color: #f1f1f1;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      color: #333;
+      font-size: 16px;
+      display: none;
+    }
+    .chatbot-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #6c6cff;
+      color: white;
+      padding: 15px;
+      border-radius: 50%;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+    }
+    .chatbot-button:hover { background-color: #4a4ae0; }
+    @media (max-width: 600px) {
+      .container { width: 90%; padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chatbot-button" onclick="toggleChatbot()">💬</div>
+
+  <div class="container" id="chatbotContainer">
+    <h2>FAQ Chatbot</h2>
+    <textarea id="question" placeholder="Type your question here..."></textarea><br>
+    <button onclick="askQuestion()">Ask</button>
+    <div id="response"></div>
+  </div>
+
+<script>
+  const chatbot = document.getElementById("chatbotContainer");
+  const chatbotBtn = document.querySelector(".chatbot-button");
+
+  function toggleChatbot() {
+    chatbot.style.display = chatbot.style.display === "block" ? "none" : "block";
+  }
+
+  document.addEventListener("click", function (event) {
+    if (
+      chatbot.style.display === "block" &&
+      !chatbot.contains(event.target) &&
+      !chatbotBtn.contains(event.target)
+    ) {
+      chatbot.style.display = "none";
+    }
+  });
+
+  async function askQuestion() {
+    const question = document.getElementById("question").value;
+    const responseDiv = document.getElementById("response");
+    responseDiv.innerHTML = "Thinking...";
+    responseDiv.style.display = "block";
+    const faqAnswers = {
+      "what services do you offer": "I offer front-end web development, responsive website creation, portfolio design, and FAQ chatbot integration. I also provide UI design services using tools like Figma, Canva, and Photoshop.",
+      "how can i contact you": "You can contact me through the Contact section on my website or email me directly at imdadullahchishti@gmail.com.",
+      "do you create websites": "Yes, I specialize in creating responsive and modern websites using HTML, CSS, JavaScript, and frameworks like Bootstrap and Tailwind CSS.",
+      "do you create mobile-friendly websites": "Yes, all websites I build are fully responsive and optimized for mobile, tablet, and desktop devices.",
+      "what is your name": "I'm Muhammad Imdadullah, a passionate and skilled front-end developer.",
+      "who are you": "I'm Muhammad Imdadullah, a CS student and a front-end developer specializing in creating responsive and modern websites.",
+      "which technologies do you use": "I work with HTML, CSS, JavaScript, Bootstrap, Tailwind CSS, and GitHub for front-end development.",
+      "which skills do you have": "I work with HTML, CSS, JavaScript, Bootstrap, Tailwind CSS, and GitHub for front-end development.",
+      "can i see your portfolio": "Absolutely! You can check out my work at https://imdadullahbootstrap.vercel.app/",
+      "can i hire you": "Yes, you can hire me for your next project. Please contact me via the contact form or email me at imdadullahchishti@gmail.com.",
+      "do you design user interfaces": "Yes, I use tools like Figma, Photoshop, and Canva to design clean and modern UIs before development.",
+      "do you offer website maintenance": "Yes, I provide website maintenance services to ensure your site remains up-to-date and secure.",
+      "do you offer web design services": "Yes, I offer complete front-end web design services including layout, responsiveness, and aesthetics.",
+      "can i hire you for my project": "Yes! Please reach out via the contact form or email me at imdadullahchishti@gmail.com, so we can discuss your project requirements.",
+      "what is your experience": "I have 1 year of experience in front-end development, working on various personal projects including responsive websites, UI design, and web applications.",
+      "hi": "Hello! How can I assist you today?",
+      "hello": "Hi there! How can I help you?",
+      "help": "Sure! What do you need help with?",
+      "thanks": "You're welcome! Let me know if you have any other questions.",
+      "thank you": "You're welcome! Feel free to ask anything else.",
+      "bye": "Goodbye! If you have more questions later, feel free to ask.",
+      "goodbye": "Goodbye! Have a great day!",
+      "how are you": "I'm just a chatbot, but thank you for asking! How can I assist you?"
+    };
+
+    const match = Object.keys(faqAnswers).find(q => question.toLowerCase().includes(q));
+    if (match) {
+      responseDiv.innerHTML = "<strong>Answer:</strong><br>" + faqAnswers[match];
+      return;
+    }
+    try {
+     const res = await fetch("https://chatbot-zkg0.onrender.com/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: question })
+      });
+
+      const data = await res.json();
+      responseDiv.innerHTML = "<strong>Answer:</strong><br>" + (data.answer || "Sorry, I couldn’t find an answer.");
+    } catch (err) {
+      responseDiv.innerHTML = "Error: " + err.message;
+    }
+  }
+</script>
+
+</body>
+</html>
