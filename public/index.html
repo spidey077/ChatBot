@@ -12,117 +12,124 @@
       padding: 0;
       display: flex;
       justify-content: center;
-      align-items: flex-end;
-      min-height: 100vh;
+      align-items: center;
+      height: 100vh;
     }
-    .container {
+
+    .chat-container {
       background: white;
       border-radius: 15px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      padding: 30px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
       width: 100%;
       max-width: 500px;
-      text-align: center;
-      display: none;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 9999;
+      height: 80vh;
+      overflow: hidden;
     }
-    h2 {
-      color: #333;
-      font-size: 24px;
-      margin-bottom: 20px;
+
+    .chat-header {
+      background: #6c6cff;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 20px;
       font-weight: bold;
     }
-    textarea {
-      width: 100%;
-      height: 100px;
+
+    .chat-messages {
+      flex: 1;
       padding: 15px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      margin-bottom: 15px;
-      resize: none;
-      outline: none;
-      box-sizing: border-box;
-      transition: border-color 0.3s;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
-    textarea:focus { border-color: #6c6cff; }
+
+    .message {
+      padding: 10px 15px;
+      border-radius: 10px;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+
+    .user-message {
+      background: #6c6cff;
+      color: white;
+      align-self: flex-end;
+    }
+
+    .bot-message {
+      background: #f1f1f1;
+      color: #333;
+      align-self: flex-start;
+    }
+
+    .chat-input-area {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+
+    textarea {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      outline: none;
+      resize: none;
+      font-size: 16px;
+      height: 60px;
+      box-sizing: border-box;
+    }
+
     button {
       background-color: #6c6cff;
       color: white;
-      padding: 10px 20px;
-      font-size: 16px;
+      padding: 0 20px;
       border: none;
-      border-radius: 5px;
       cursor: pointer;
+      font-size: 16px;
       transition: background-color 0.3s;
     }
+
     button:hover { background-color: #4a4ae0; }
-    #response {
-      margin-top: 20px;
-      background-color: #f1f1f1;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      color: #333;
-      font-size: 16px;
-      display: none;
-    }
-    .chatbot-button {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #6c6cff;
-      color: white;
-      padding: 15px;
-      border-radius: 50%;
-      font-size: 24px;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      z-index: 9999;
-    }
-    .chatbot-button:hover { background-color: #4a4ae0; }
+
     @media (max-width: 600px) {
-      .container { width: 90%; padding: 20px; }
+      .chat-container { height: 90vh; }
     }
   </style>
 </head>
 <body>
 
-  <div class="chatbot-button" onclick="toggleChatbot()">💬</div>
-
-  <div class="container" id="chatbotContainer">
-    <h2>FAQ Chatbot</h2>
-    <textarea id="question" placeholder="Type your question here..."></textarea><br>
-    <button onclick="askQuestion()">Ask</button>
-    <div id="response"></div>
+  <div class="chat-container">
+    <div class="chat-header">FAQ Chatbot</div>
+    <div class="chat-messages" id="chatMessages"></div>
+    <div class="chat-input-area">
+      <textarea id="question" placeholder="Type your question..."></textarea>
+      <button onclick="askQuestion()">Ask</button>
+    </div>
   </div>
 
 <script>
-  const chatbot = document.getElementById("chatbotContainer");
-  const chatbotBtn = document.querySelector(".chatbot-button");
+  const chatMessages = document.getElementById("chatMessages");
 
-  function toggleChatbot() {
-    chatbot.style.display = chatbot.style.display === "block" ? "none" : "block";
+  function appendMessage(content, sender) {
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("message", sender === "user" ? "user-message" : "bot-message");
+    messageDiv.innerHTML = content;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
-  document.addEventListener("click", function (event) {
-    if (
-      chatbot.style.display === "block" &&
-      !chatbot.contains(event.target) &&
-      !chatbotBtn.contains(event.target)
-    ) {
-      chatbot.style.display = "none";
-    }
-  });
-
   async function askQuestion() {
-    const question = document.getElementById("question").value;
-    const responseDiv = document.getElementById("response");
-    responseDiv.innerHTML = "Thinking...";
-    responseDiv.style.display = "block";
+    const questionInput = document.getElementById("question");
+    const question = questionInput.value.trim();
+    if (!question) return;
+
+    appendMessage(question, "user");
+    questionInput.value = "";
+
+    appendMessage("Thinking...", "bot");
+
     const faqAnswers = {
       "what services do you offer": "I offer front-end web development, responsive website creation, portfolio design, and FAQ chatbot integration. I also provide UI design services using tools like Figma, Canva, and Photoshop.",
       "how can i contact you": "You can contact me through the Contact section on my website or email me directly at imdadullahchishti@gmail.com.",
@@ -150,21 +157,26 @@
     };
 
     const match = Object.keys(faqAnswers).find(q => question.toLowerCase().includes(q));
+
+    // Remove "Thinking..." before replying
+    chatMessages.lastChild.remove();
+
     if (match) {
-      responseDiv.innerHTML = "<strong>Answer:</strong><br>" + faqAnswers[match];
+      appendMessage(faqAnswers[match], "bot");
       return;
     }
+
     try {
-     const res = await fetch("https://chatbot-zkg0.onrender.com/ask", {
+      const res = await fetch("https://chatbot-zkg0.onrender.com/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: question })
       });
 
       const data = await res.json();
-      responseDiv.innerHTML = "<strong>Answer:</strong><br>" + (data.answer || "Sorry, I couldn’t find an answer.");
+      appendMessage(data.answer || "Sorry, I couldn’t find an answer.", "bot");
     } catch (err) {
-      responseDiv.innerHTML = "Error: " + err.message;
+      appendMessage("Error: " + err.message, "bot");
     }
   }
 </script>
